@@ -1,7 +1,7 @@
 ---
 name: cofounder-im
 description: Pull startup project data and AI-generated build specifications from CoFounder.im. Use when a user wants to build a project that was validated and planned on CoFounder.im — lists projects, fetches the full build spec (tech stack, MVP plan, UI/UX, implementation plan, OpenClaw builder output), and helps orchestrate sub-agents to build it.
-version: 1.1.0
+version: 1.1.1
 metadata:
   openclaw:
     requires:
