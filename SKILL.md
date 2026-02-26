@@ -1,7 +1,7 @@
 ---
 name: cofounder-im
-description: Pull startup project data and AI-generated build specifications from CoFounder.im. Use when a user wants to build a project that was validated and planned on CoFounder.im — lists projects, fetches the full build spec (tech stack, MVP plan, UI/UX, implementation plan, OpenClaw builder output), and helps orchestrate sub-agents to build it.
-version: 1.1.2
+description: Pull startup project data and AI-generated build specifications from CoFounder.im. Use when a user wants to build a project that was validated and planned on CoFounder.im — lists projects, fetches the full build spec (tech stack, MVP plan, UI/UX, implementation plan, OpenClaw builder output), and helps orchestrate sub-agents to build it. Trigger phrases — "build my CoFounder project", "pull my project from cofounder.im", "use my CoFounder build spec", "start building from CoFounder", "fetch my startup plan", "build from cofounder".
+version: 1.2.0
 metadata:
   openclaw:
     requires:
@@ -23,6 +23,22 @@ metadata:
 ## Overview
 
 Connect OpenClaw to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them. CoFounder.im runs 20+ AI agents that validate ideas, research markets, plan MVPs, design UI/UX, and generate implementation plans. This skill lets you fetch those results and use them as the foundation for building the project.
+
+## When to use this skill
+
+Use this skill when the user says anything like:
+
+- "Build my CoFounder project"
+- "Pull my project from cofounder.im"
+- "Use my CoFounder build spec"
+- "Start building from CoFounder"
+- "Fetch my startup plan from CoFounder"
+- "Build [project name] from cofounder"
+- "What projects do I have on CoFounder?"
+- "Get the build plan for [project name]"
+- "I planned a project on cofounder.im, now build it"
+
+Do **not** use this skill for general coding tasks, project scaffolding from scratch, or anything unrelated to CoFounder.im projects.
 
 ## Safety policy
 
@@ -71,23 +87,31 @@ curl -s https://cofounder.im/api/v1/projects \
   -H "Authorization: Bearer $COFOUNDER_API_TOKEN" | jq .
 ```
 
-Response shape:
+Example response:
 ```json
 {
   "projects": [
     {
-      "id": "uuid",
-      "name": "ProjectName",
-      "description": "...",
+      "id": "d25165d2-26c5-43dc-b4a1-ef053bf8277d",
+      "name": "FitTrack",
+      "description": "Interactive, browser-based archive that presents publicly released emails in a personalized workout plans and progress analytics",
       "status": "completed",
       "package_type": "basic",
+      "inserted_at": "2026-02-15T14:22:00Z"
+    },
+    {
+      "id": "a4cdfd3f-2747-4d0e-afe2-8978d8911646",
+      "name": "MealPlan Pro",
+      "description": "Smart meal planning platform with grocery list generation and nutritional tracking",
+      "status": "active",
+      "package_type": "pro",
       "inserted_at": "2026-02-20T10:30:00Z"
     }
   ]
 }
 ```
 
-Show the user a numbered list of projects with name, status, and description. Ask which one to build. Only projects with status `"completed"` have full build specs.
+Show the user a numbered list of projects with name, status, and description. Ask which one to build. Only projects with status `"completed"` have full build specs. Projects with status `"active"` are still being processed by CoFounder.im agents.
 
 ### Step 2: Fetch build specification
 
@@ -96,24 +120,29 @@ curl -s https://cofounder.im/api/v1/projects/PROJECT_ID/build-spec \
   -H "Authorization: Bearer $COFOUNDER_API_TOKEN" | jq .
 ```
 
-Response shape:
+Example response (agent output values are truncated — actual values are full markdown documents):
 ```json
 {
   "project": {
-    "id": "uuid",
-    "name": "ProjectName",
-    "description": "...",
+    "id": "d25165d2-26c5-43dc-b4a1-ef053bf8277d",
+    "name": "FitTrack",
+    "description": "Interactive, browser-based archive that presents publicly released emails in a personalized workout plans and progress analytics",
     "status": "completed"
   },
   "agent_outputs": {
-    "tech_stack": "## Tech Stack\n\n...",
-    "mvp_planner": "## Core Features\n\n...",
-    "ui_ux_assistant": "## Design System\n\n...",
-    "implementation_plan_generator": "## Phase 1: Setup\n\n...",
-    "openclaw_builder": "# OpenClaw Build Plan\n\n..."
+    "tech_stack": "## Tech Stack\n\n- Framework: Next.js 14\n- Language: TypeScript 5.3\n- Database: PostgreSQL 16\n- ORM: Prisma\n- CSS: Tailwind CSS 3.4\n...",
+    "mvp_planner": "## Core Features\n\n### 1. Workout Tracker\n- Log exercises with sets, reps, and weight\n- Rest timer between sets\n- Progress charts and personal records\n...",
+    "ui_ux_assistant": "## Design System\n\n### Colors\n- Primary: #6366f1 (Indigo)\n- Background: #f8fafc\n- Text: #1e293b\n...",
+    "implementation_plan_generator": "## Phase 1: Project Setup\n\n1. Initialize Next.js with TypeScript\n2. Configure PostgreSQL with Prisma ORM\n3. Set up authentication with NextAuth\n...",
+    "openclaw_builder": "# OpenClaw Build Plan: FitTrack\n\n## Project Overview\nAn AI-powered fitness tracking app...\n\n## Tech Stack Summary\n- Framework: Next.js 14\n...\n\n## Orchestration Plan\nTotal sub-agents: 5\nExecution order: project-setup -> database -> auth -> frontend -> testing\n...",
+    "idea_validator": "## Validation Summary\n\nViability Score: 7.5/10\n...",
+    "market_research": "## Market Analysis\n\nTarget audience: fitness enthusiasts, personal trainers, gym-goers\n...",
+    "competitor_analysis": "## Competitors\n\n1. Strong - workout tracking app\n..."
   }
 }
 ```
+
+The `openclaw_builder` output is the primary input for building. Other outputs provide supporting context (tech decisions, design tokens, feature specs) that sub-agents may need.
 
 ### Step 3: Review and approve the build plan
 
