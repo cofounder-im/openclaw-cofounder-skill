@@ -1,11 +1,13 @@
-# CoFounder.im Skill for AI Coding Agents
+# CoFounder.im Skill for OpenClaw
 
 [![Publish to ClawHub](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml/badge.svg)](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml)
 [![ClawHub](https://img.shields.io/badge/ClawHub-cofounder--im-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRleHQgeT0iMjAiIGZvbnQtc2l6ZT0iMjAiPvCfmoA8L3RleHQ+PC9zdmc+)](https://clawhub.ai/alexfilatov/cofounder-im)
 [![skills.sh](https://img.shields.io/badge/skills.sh-cofounder--im-8A2BE2)](https://skills.sh/cofounder-im/openclaw-cofounder-skill/cofounder-im)
 [![Install](https://img.shields.io/badge/npx_skills_add-cofounder--im-green)](https://github.com/cofounder-im/openclaw-cofounder-skill)
 
-An [Agent Skill](https://agentskills.io) that connects to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them. Works with **Claude Code, OpenClaw, Cursor, Codex CLI, Gemini CLI, Windsurf, Cline, Copilot**, and [35+ other agents](https://skills.sh).
+An [OpenClaw](https://openclaw.ai) skill that connects to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them. Fetches the full build specification, parses the OpenClaw Builder output into sub-agent tasks, and spawns coordinated sub-agents to build each component.
+
+Also works as an [Agent Skill](https://agentskills.io) for Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, Cline, Copilot, and [35+ other agents](https://skills.sh).
 
 ## What it does
 
@@ -15,7 +17,7 @@ CoFounder.im runs 20+ AI agents that validate your startup idea:
 - MVP planning & tech stack recommendation
 - UI/UX design system
 - Implementation plan for coding assistants
-- **OpenClaw Builder** — a multi-agent build specification designed for OpenClaw
+- **OpenClaw Builder** — a multi-agent build specification designed specifically for OpenClaw
 
 This skill lets OpenClaw fetch those results via REST API and execute the build plan by spawning coordinated sub-agents.
 
@@ -29,28 +31,28 @@ This skill lets OpenClaw fetch those results via REST API and execute the build 
 
 ### 2. Install the skill
 
-**Any agent** (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Cline, etc.):
-
-```bash
-npx skills add cofounder-im/openclaw-cofounder-skill
-```
-
 **OpenClaw** (via [ClawHub](https://clawhub.ai/alexfilatov/cofounder-im)):
 
 ```bash
 npx clawhub install cofounder-im
 ```
 
+**Other agents** (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Cline, etc.):
+
+```bash
+npx skills add cofounder-im/openclaw-cofounder-skill
+```
+
 ### 3. Configure your API token
 
-Set the `COFOUNDER_API_TOKEN` environment variable for your agent. For OpenClaw:
+**OpenClaw:**
 
 ```bash
 openclaw config set skills.entries.cofounder-im.env.COFOUNDER_API_TOKEN "cfr_your_token_here"
 openclaw gateway restart
 ```
 
-For other agents, set it as an environment variable:
+**Other agents** — set it as an environment variable:
 
 ```bash
 export COFOUNDER_API_TOKEN="cfr_your_token_here"
@@ -58,7 +60,6 @@ export COFOUNDER_API_TOKEN="cfr_your_token_here"
 
 ### 4. Verify the installation
 
-For OpenClaw:
 ```bash
 openclaw skills info cofounder-im
 ```
@@ -69,7 +70,7 @@ Once installed, ask OpenClaw:
 
 > "List my CoFounder.im projects"
 
-> "Build my FreelancerInvoice project from CoFounder.im"
+> "Build my project from CoFounder.im"
 
 > "Pull the build spec for my latest CoFounder.im project and start building"
 
@@ -80,15 +81,6 @@ OpenClaw will:
 4. Parse the OpenClaw Builder output into sub-agent tasks
 5. Spawn sub-agents to build each component
 6. Coordinate phases until the project is complete
-
-## API endpoints
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/v1/projects` | List your projects |
-| `GET /api/v1/projects/:id/build-spec` | Get project + all agent outputs |
-
-Authentication via `Authorization: Bearer cfr_...` header.
 
 ## How it works
 
@@ -109,6 +101,15 @@ CoFounder.im                          OpenClaw
 └─────────────────────┘               │  └─ DevOps           │
                                       └──────────────────────┘
 ```
+
+## API endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/projects` | List your projects |
+| `GET /api/v1/projects/:id/build-spec` | Get project + all agent outputs |
+
+Authentication via `Authorization: Bearer cfr_...` header.
 
 ## Requirements
 
