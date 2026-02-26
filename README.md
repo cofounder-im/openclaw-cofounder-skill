@@ -1,5 +1,8 @@
 # CoFounder.im Skill for OpenClaw
 
+[![Publish to ClawHub](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml/badge.svg)](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml)
+[![ClawHub](https://img.shields.io/badge/ClawHub-cofounder--im-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRleHQgeT0iMjAiIGZvbnQtc2l6ZT0iMjAiPvCfmoA8L3RleHQ+PC9zdmc+)](https://clawhub.ai/alexfilatov/cofounder-im)
+
 An [OpenClaw](https://openclaw.ai) skill that connects to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them.
 
 ## What it does
