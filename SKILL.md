@@ -1,7 +1,7 @@
 ---
 name: cofounder-im
 description: Pull startup project data and AI-generated build specifications from CoFounder.im. Use when a user wants to build a project that was validated and planned on CoFounder.im — lists projects, fetches the full build spec (tech stack, MVP plan, UI/UX, implementation plan, OpenClaw builder output), and helps orchestrate sub-agents to build it.
-version: 1.0.0
+version: 1.1.0
 metadata:
   openclaw:
     requires:
@@ -13,6 +13,9 @@ metadata:
       primaryEnv: COFOUNDER_API_TOKEN
     emoji: "\U0001F680"
     homepage: https://cofounder.im/openclaw
+    safety:
+      autoApproval: false
+      requiresUserConfirmation: true
 ---
 
 # CoFounder.im Skill
@@ -21,6 +24,17 @@ metadata:
 
 Connect OpenClaw to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them. CoFounder.im runs 20+ AI agents that validate ideas, research markets, plan MVPs, design UI/UX, and generate implementation plans. This skill lets you fetch those results and use them as the foundation for building the project.
 
+## Safety policy
+
+This skill fetches build specifications from a remote API (cofounder.im). To ensure safe execution:
+
+1. **User approval required** — Always show the user a summary of the build plan and get explicit confirmation before spawning any sub-agents or running any commands.
+2. **Preview before execution** — Before each phase, display the sub-agent's goal, requirements, and verification command. Ask the user to approve.
+3. **No blind execution** — Do not execute the build spec verbatim. Review each phase for reasonableness before presenting it to the user.
+4. **Sandboxed environment recommended** — Run builds in a dedicated directory or container. Do not build in directories containing existing projects or sensitive files.
+5. **Credential scope** — This skill only requires `COFOUNDER_API_TOKEN` for the CoFounder.im API. Build plans may reference additional tools (databases, cloud CLIs, etc.) depending on the project's tech stack — the user should review and install these as needed.
+6. **No network access by default** — Sub-agents should only access local files and the project repository. Any external network calls (package installs, API integrations) should be reviewed by the user.
+
 ## Core rules
 
 - Always authenticate with the bearer token from `COFOUNDER_API_TOKEN`.
@@ -28,8 +42,8 @@ Connect OpenClaw to [CoFounder.im](https://cofounder.im) to pull AI-validated st
 - Use `get-build-spec` to pull the full build specification for the chosen project.
 - The build spec contains agent outputs keyed by type (e.g., `tech_stack`, `mvp_planner`, `ui_ux_assistant`, `implementation_plan_generator`, `openclaw_builder`).
 - The `openclaw_builder` output is the most important — it contains a structured multi-agent build plan designed specifically for OpenClaw.
-- Parse the `openclaw_builder` output to identify sub-agent tasks, then use `sessions_spawn` to create sub-agents for each build phase.
-- Do not modify or reinterpret the build spec — execute it as written.
+- Parse the `openclaw_builder` output to identify sub-agent tasks, then present them to the user for approval before spawning.
+- **Always get user confirmation before spawning sub-agents or running verification commands.**
 
 ## Quick start
 
@@ -101,36 +115,43 @@ Response shape:
 }
 ```
 
-### Step 3: Parse the OpenClaw Builder output
+### Step 3: Review and approve the build plan
 
-The `openclaw_builder` agent output contains a structured build plan with sections like:
+Parse the `openclaw_builder` agent output and present the user with a summary:
+
+1. **Show the overall plan** — project name, tech stack, number of phases, dependency graph
+2. **List each sub-agent phase** — name, goal, dependencies, verification command
+3. **Highlight any additional tools required** — databases, CLIs, package managers beyond curl/jq
+4. **Ask the user to confirm** before proceeding to execution
+
+Example summary to show the user:
 
 ```
-# OpenClaw Multi-Agent Build Plan
+Build Plan: ProjectName (6 phases)
+Tech: Next.js, TypeScript, PostgreSQL
 
-## Project Overview
-...
+Phase 1: project-setup (no deps) — Initialize repo and install dependencies
+Phase 2: database (depends: project-setup) — Create schema and migrations
+Phase 3: auth (depends: project-setup) — User registration and login
+Phase 4: core-features (depends: database, auth) — Main business logic
+Phase 5: frontend (depends: core-features) — UI components and pages
+Phase 6: testing (depends: frontend) — Test suite and verification
 
-## Sub-Agent 1: [Name]
-**Role:** ...
-**Task:** ...
-**Instructions:**
-...
+Additional tools needed: node, npm, psql
 
-## Sub-Agent 2: [Name]
-...
+Proceed with this build plan? (yes/no)
 ```
 
-Parse each `## Sub-Agent N:` section to extract the task definitions.
-
-### Step 4: Execute the build
+### Step 4: Execute the build (after user approval)
 
 For each sub-agent defined in the build plan:
 
-1. Create the sub-agent using `sessions_spawn` with the instructions from its section
-2. Include relevant context from other agent outputs (tech_stack, ui_ux_assistant, etc.) as specified in the build plan
-3. Monitor sub-agent completion
-4. Coordinate handoffs between phases as specified
+1. **Show the user what will be spawned** — the sub-agent's goal, requirements, and context
+2. **Get user approval** for each phase (or batch-approve all phases upfront)
+3. Create the sub-agent using `sessions_spawn` with the requirements from its section
+4. Include relevant context from other agent outputs (tech_stack, ui_ux_assistant, etc.)
+5. Monitor sub-agent completion
+6. **Show verification results** before proceeding to the next phase
 
 **Constraints:**
 - Maximum 5 concurrent sub-agents (OpenClaw limit)
@@ -179,6 +200,20 @@ Authorization: Bearer cfr_your_token_here
 | `business_model` | Business model canvas |
 | `monetization_strategy` | Revenue and pricing strategy |
 | `go_to_market` | Go-to-market strategy |
+
+## Additional runtime dependencies
+
+Build plans generated by CoFounder.im may require tools beyond `curl` and `jq`, depending on the project's tech stack. Common examples:
+
+| Tech Stack | Additional Tools |
+|------------|-----------------|
+| Node.js / Next.js / React | `node`, `npm` or `yarn` |
+| Elixir / Phoenix | `elixir`, `mix`, `postgres` |
+| Python / Django / FastAPI | `python`, `pip`, `postgres` |
+| Ruby / Rails | `ruby`, `bundler`, `postgres` |
+| Go | `go` |
+
+The skill will identify required tools during the build plan review (Step 3) so you can install them before execution begins.
 
 ## Getting your API token
 
