@@ -1,0 +1,36 @@
+name: Publish to ClawHub
+
+on:
+  push:
+    branches: [master]
+    paths: [SKILL.md]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Extract version from SKILL.md
+        id: meta
+        run: |
+          version=$(grep '^version:' SKILL.md | sed 's/version: *//')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate with ClawHub
+        run: npx clawhub login --token "$CLAWHUB_TOKEN" --no-browser
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+
+      - name: Publish to ClawHub
+        run: |
+          npx clawhub publish . \
+            --slug cofounder-im \
+            --name "OpenClaw Cofounder Skill" \
+            --version "${{ steps.meta.outputs.version }}" \
+            --changelog "Automated publish from commit ${{ github.sha }}"
