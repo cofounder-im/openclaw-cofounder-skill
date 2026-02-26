@@ -94,7 +94,7 @@ Example response:
     {
       "id": "d25165d2-26c5-43dc-b4a1-ef053bf8277d",
       "name": "FitTrack",
-      "description": "Interactive, browser-based archive that presents publicly released emails in a personalized workout plans and progress analytics",
+      "description": "AI-powered fitness tracking app with personalized workout plans and progress analytics",
       "status": "completed",
       "package_type": "basic",
       "inserted_at": "2026-02-15T14:22:00Z"
@@ -126,7 +126,7 @@ Example response (agent output values are truncated — actual values are full m
   "project": {
     "id": "d25165d2-26c5-43dc-b4a1-ef053bf8277d",
     "name": "FitTrack",
-    "description": "Interactive, browser-based archive that presents publicly released emails in a personalized workout plans and progress analytics",
+    "description": "AI-powered fitness tracking app with personalized workout plans and progress analytics",
     "status": "completed"
   },
   "agent_outputs": {
