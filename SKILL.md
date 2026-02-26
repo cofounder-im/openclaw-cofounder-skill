@@ -1,5 +1,5 @@
 ---
-name: cofounder
+name: cofounder-im
 description: Pull startup project data and AI-generated build specifications from CoFounder.im. Use when a user wants to build a project that was validated and planned on CoFounder.im — lists projects, fetches the full build spec (tech stack, MVP plan, UI/UX, implementation plan, OpenClaw builder output), and helps orchestrate sub-agents to build it.
 version: 1.0.0
 metadata:
@@ -185,4 +185,5 @@ Authorization: Bearer cfr_your_token_here
 1. Sign up at [cofounder.im](https://cofounder.im)
 2. Create a project and run the AI agents
 3. Go to [Settings](https://cofounder.im/users/settings) and generate an API token
-4. Set it as an environment variable: `export COFOUNDER_API_TOKEN="cfr_..."`
+4. Configure it: `openclaw config set skills.entries.cofounder-im.env.COFOUNDER_API_TOKEN "cfr_..."`
+5. Restart: `openclaw gateway restart`
