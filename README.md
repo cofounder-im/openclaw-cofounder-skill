@@ -22,16 +22,31 @@ This skill lets OpenClaw fetch those results via REST API and execute the build 
 2. Create a project and run the AI agents (wait for all to complete)
 3. Go to [Settings](https://cofounder.im/users/settings) and generate an API token
 
-### 2. Set the environment variable
+### 2. Install the skill
+
+From [ClawHub](https://clawhub.ai/alexfilatov/cofounder-im):
 
 ```bash
-export COFOUNDER_API_TOKEN="cfr_your_token_here"
+npx clawhub install cofounder-im
 ```
 
-### 3. Install the skill
+Or directly from GitHub:
 
 ```bash
-/install cofounder-im/openclaw-cofounder-skill
+npx clawhub install github:cofounder-im/openclaw-cofounder-skill
+```
+
+### 3. Configure your API token
+
+```bash
+openclaw config set skills.entries.cofounder-im.env.COFOUNDER_API_TOKEN "cfr_your_token_here"
+openclaw gateway restart
+```
+
+### 4. Verify the installation
+
+```bash
+openclaw skills info cofounder-im
 ```
 
 ## Usage
