@@ -102,6 +102,12 @@ CoFounder.im                          OpenClaw
                                       └──────────────────────┘
 ```
 
+## MCP Server
+
+CoFounder.im also provides an [MCP server](https://mcp.cofounder.im) for agents that support the Model Context Protocol natively (Claude Code, Cursor, Windsurf, Cline, GitHub Copilot). The MCP server exposes the same project data through `list_projects`, `get_build_spec`, and `get_agent_output` tools over JSON-RPC 2.0 (Streamable HTTP).
+
+If your agent supports MCP, you can connect directly without installing this skill — see [mcp.cofounder.im](https://mcp.cofounder.im) for setup instructions.
+
 ## API endpoints
 
 | Endpoint | Description |
