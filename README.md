@@ -1,9 +1,11 @@
-# CoFounder.im Skill for OpenClaw
+# CoFounder.im Skill for AI Coding Agents
 
 [![Publish to ClawHub](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml/badge.svg)](https://github.com/cofounder-im/openclaw-cofounder-skill/actions/workflows/publish.yml)
 [![ClawHub](https://img.shields.io/badge/ClawHub-cofounder--im-blue?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRleHQgeT0iMjAiIGZvbnQtc2l6ZT0iMjAiPvCfmoA8L3RleHQ+PC9zdmc+)](https://clawhub.ai/alexfilatov/cofounder-im)
+[![skills.sh](https://img.shields.io/badge/skills.sh-cofounder--im-8A2BE2)](https://skills.sh/cofounder-im/openclaw-cofounder-skill/cofounder-im)
+[![Install](https://img.shields.io/badge/npx_skills_add-cofounder--im-green)](https://github.com/cofounder-im/openclaw-cofounder-skill)
 
-An [OpenClaw](https://openclaw.ai) skill that connects to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them.
+An [Agent Skill](https://agentskills.io) that connects to [CoFounder.im](https://cofounder.im) to pull AI-validated startup projects and autonomously build them. Works with **Claude Code, OpenClaw, Cursor, Codex CLI, Gemini CLI, Windsurf, Cline, Copilot**, and [35+ other agents](https://skills.sh).
 
 ## What it does
 
@@ -27,27 +29,36 @@ This skill lets OpenClaw fetch those results via REST API and execute the build 
 
 ### 2. Install the skill
 
-From [ClawHub](https://clawhub.ai/alexfilatov/cofounder-im):
+**Any agent** (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Cline, etc.):
+
+```bash
+npx skills add cofounder-im/openclaw-cofounder-skill
+```
+
+**OpenClaw** (via [ClawHub](https://clawhub.ai/alexfilatov/cofounder-im)):
 
 ```bash
 npx clawhub install cofounder-im
 ```
 
-Or directly from GitHub:
-
-```bash
-npx clawhub install github:cofounder-im/openclaw-cofounder-skill
-```
-
 ### 3. Configure your API token
+
+Set the `COFOUNDER_API_TOKEN` environment variable for your agent. For OpenClaw:
 
 ```bash
 openclaw config set skills.entries.cofounder-im.env.COFOUNDER_API_TOKEN "cfr_your_token_here"
 openclaw gateway restart
 ```
 
+For other agents, set it as an environment variable:
+
+```bash
+export COFOUNDER_API_TOKEN="cfr_your_token_here"
+```
+
 ### 4. Verify the installation
 
+For OpenClaw:
 ```bash
 openclaw skills info cofounder-im
 ```
